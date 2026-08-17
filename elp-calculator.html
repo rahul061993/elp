@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Effective License Position Worksheet</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+:root{
+  --shell: #0F1622;
+  --shell-2: #16202F;
+  --paper: #F2EDDD;
+  --paper-line: #D9D2B8;
+  --paper-shadow: rgba(0,0,0,0.35);
+  --ink: #1C2333;
+  --ink-soft: #5B5A4E;
+  --brass: #B08D57;
+  --brass-light: #D8C08F;
+  --compliant: #2F6B4F;
+  --compliant-bg: #E4EEE6;
+  --risk: #A6741C;
+  --risk-bg: #F4EAD3;
+  --shortfall: #A13D2B;
+  --shortfall-bg: #F3E1DA;
+  --rule-dark: #2A3446;
+}
+
+*{ box-sizing: border-box; }
+html,body{ margin:0; padding:0; }
+body{
+  background:
+    radial-gradient(circle at 15% -10%, #1B2740 0%, transparent 45%),
+    radial-gradient(circle at 90% 110%, #1B2740 0%, transparent 40%),
+    var(--shell);
+  color: var(--paper);
+  font-family: 'IBM Plex Sans', sans-serif;
+  min-height: 100vh;
+  padding: 40px 20px 80px;
+}
+
+.wrap{ max-width: 1180px; margin: 0 auto; }
+
+/* ---------- Header ---------- */
+header{
+  display:flex; justify-content:space-between; align-items:flex-end;
+  gap: 24px; margin-bottom: 30px; flex-wrap: wrap;
+  border-bottom: 1px solid var(--rule-dark);
+  padding-bottom: 22px;
+}
+.eyebrow{
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--brass-light); margin: 0 0 8px;
+}
+h1{
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  font-size: clamp(28px, 4vw, 42px);
+  margin: 0;
+  letter-spacing: -0.01em;
+  color: #FBF8F0;
+}
+.subtitle{
+  font-size: 13.5px; color: #A9B2C4; margin-top: 8px; max-width: 480px; line-height: 1.5;
+}
+.header-meta{
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11.5px; color: #8B93A6; text-align: right;
+  display:flex; flex-direction:column; gap: 4px;
+}
+.header-meta span b{ color: var(--brass-light); font-weight: 500; }
+
+/* ---------- Summary strip ---------- */
+.summary{
+  display:grid;
+  grid-template-columns: repeat(4, 1fr) auto;
+  gap: 14px;
+  margin-bottom: 30px;
+}
+.stat{
+  background: var(--shell-2);
+  border: 1px solid var(--rule-dark);
+  border-radius: 10px;
+  padding: 16px 18px;
+}
+.stat .num{
+  font-family: 'Fraunces', serif;
+  font-size: 26px; font-weight: 600; color: #FBF8F0; line-height: 1;
+}
+.stat .lbl{
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase;
+  color: #8B93A6; margin-top: 8px;
+}
+.stat.exposure .num{ color: var(--shortfall); }
+.stat.exposure.zero .num{ color: var(--compliant); }
+
+/* Verdict stamp */
+.verdict{
+  min-width: 168px;
+  display:flex; align-items:center; justify-content:center;
+  position: relative;
+}
+.stamp{
+  width: 150px; height: 150px; border-radius: 50%;
+  border: 3px solid currentColor;
+  display:flex; align-items:center; justify-content:center;
+  text-align:center;
+  transform: rotate(-9deg);
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 600; font-size: 13px; letter-spacing: 0.06em;
+  position: relative;
+  opacity: 0.95;
+}
+.stamp::before{
+  content:'';
+  position:absolute; inset: 8px;
+  border: 1px dashed currentColor;
+  border-radius: 50%;
+  opacity: 0.6;
+}
+.stamp span{ padding: 0 18px; line-height: 1.3; text-transform: uppercase; }
+.stamp.compliant{ color: var(--compliant); }
+.stamp.risk{ color: var(--risk); }
+.stamp.shortfall{ color: var(--shortfall); }
+
+/* ---------- Toolbar ---------- */
+.toolbar{
+  display:flex; justify-content:space-between; align-items:center;
+  gap: 12px; flex-wrap: wrap; margin-bottom: 14px;
+}
+.currency-toggle{
+  display:flex; gap:4px; background: var(--shell-2); padding:4px; border-radius: 8px;
+  border: 1px solid var(--rule-dark);
+}
+.currency-toggle button{
+  border:none; background:transparent; color:#8B93A6;
+  font-family: 'IBM Plex Mono', monospace; font-size:12px; padding:6px 10px;
+  border-radius:6px; cursor:pointer;
+}
+.currency-toggle button.active{ background: var(--brass); color:#1C2333; font-weight:600; }
+
+.actions{ display:flex; gap:8px; flex-wrap: wrap; }
+button.btn{
+  font-family:'IBM Plex Sans', sans-serif; font-size:13px; font-weight:500;
+  border-radius:7px; padding:9px 14px; cursor:pointer; border:1px solid var(--rule-dark);
+  background: var(--shell-2); color:#E6E2D3; transition: background .15s, transform .1s;
+}
+button.btn:hover{ background:#1D2839; }
+button.btn:active{ transform: scale(0.97); }
+button.btn.primary{ background: var(--brass); color:#1C2333; border-color: var(--brass); font-weight:600; }
+button.btn.primary:hover{ background: var(--brass-light); }
+input#csvFile{ display:none; }
+
+/* ---------- Ledger (paper) ---------- */
+.ledger{
+  background: var(--paper);
+  border-radius: 4px;
+  box-shadow: 0 30px 60px var(--paper-shadow), 0 2px 0 var(--brass);
+  padding: 6px 6px 18px;
+  position: relative;
+  overflow-x: auto;
+}
+.ledger::before{
+  content:'';
+  position:absolute; left:0; top:0; bottom:0; width: 34px;
+  background: repeating-linear-gradient(180deg, transparent 0 27px, var(--paper-line) 27px 28px);
+  opacity: .55;
+  pointer-events:none;
+}
+table{ width:100%; border-collapse: collapse; min-width: 900px; }
+thead th{
+  font-family:'IBM Plex Mono', monospace;
+  font-size: 10.5px; letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--ink-soft); text-align: left; padding: 14px 12px 10px 44px;
+  border-bottom: 1.5px solid var(--ink);
+}
+thead th:first-child{ padding-left: 44px; }
+thead th.num, tbody td.num{ text-align:right; padding-right: 16px; }
+tbody td{
+  padding: 8px 12px; border-bottom: 1px solid var(--paper-line);
+  font-size: 13.5px; color: var(--ink); vertical-align: middle;
+}
+tbody tr td:first-child{ padding-left: 44px; }
+tbody tr:hover{ background: rgba(176,141,87,0.08); }
+
+td input, td select{
+  font-family:'IBM Plex Sans', sans-serif; font-size: 13.5px;
+  border: none; background: transparent; color: var(--ink);
+  padding: 4px 2px; width: 100%; border-bottom: 1px dashed transparent;
+}
+td input:focus, td select:focus{
+  outline:none; border-bottom: 1px dashed var(--brass); background: rgba(176,141,87,0.06);
+}
+td input.numcell{ font-family:'IBM Plex Mono', monospace; text-align:right; }
+td.num, td.calc{ font-family:'IBM Plex Mono', monospace; text-align:right; }
+
+.badge{
+  display:inline-flex; align-items:center; gap:6px;
+  font-family:'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing:0.04em;
+  padding: 4px 9px; border-radius: 20px; text-transform: uppercase; font-weight:600;
+  white-space: nowrap;
+}
+.badge.compliant{ background: var(--compliant-bg); color: var(--compliant); }
+.badge.risk{ background: var(--risk-bg); color: var(--risk); }
+.badge.shortfall{ background: var(--shortfall-bg); color: var(--shortfall); }
+.badge::before{ content:'●'; font-size: 8px; }
+
+td.pos.pos-neg{ color: var(--shortfall); font-weight:600; }
+td.pos.pos-pos{ color: var(--compliant); }
+
+.rowdel{
+  border:none; background:none; color: var(--ink-soft); cursor:pointer; font-size: 15px;
+  width: 26px; height: 26px; border-radius: 50%;
+}
+.rowdel:hover{ background: var(--shortfall-bg); color: var(--shortfall); }
+
+tfoot td{
+  font-family:'IBM Plex Mono', monospace; font-weight:600; font-size: 13px;
+  border-top: 1.5px solid var(--ink); padding: 12px 12px 10px 44px; color: var(--ink);
+}
+tfoot td.num{ text-align:right; padding-right:16px; }
+
+.empty-row td{
+  padding: 40px 20px; text-align:center; color: var(--ink-soft); font-size: 13.5px;
+}
+
+footer.note{
+  margin-top: 18px; font-size: 12px; color:#7C859A; line-height:1.6; max-width: 720px;
+}
+footer.note b{ color:#B7BECF; }
+.legend{ display:flex; gap:16px; margin-top:6px; flex-wrap:wrap; font-family:'IBM Plex Mono', monospace; font-size: 11px; color:#8B93A6; }
+.legend span{ display:inline-flex; align-items:center; gap:6px; }
+.legend i{ width:8px; height:8px; border-radius:50%; display:inline-block; }
+.legend i.c{ background: var(--compliant); } .legend i.r{ background: var(--risk); } .legend i.s{ background: var(--shortfall); }
+
+@media (max-width: 720px){
+  .summary{ grid-template-columns: repeat(2,1fr); }
+  .verdict{ grid-column: span 2; justify-content:flex-start; }
+  header{ flex-direction: column; align-items: flex-start; }
+  .header-meta{ text-align:left; }
+}
+
+@media print{
+  body{ background:#fff; color:#000; padding:0; }
+  .toolbar, .rowdel, footer.note{ display:none; }
+  .ledger{ box-shadow:none; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div>
+      <p class="eyebrow">Software Asset Management · Compliance Validation</p>
+      <h1>Effective License Position</h1>
+      <p class="subtitle">Comparison of software license entitlements against actual usage to determine compliance, optimize costs, and manage risk.</p>
+    </div>
+    <div class="header-meta">
+      <span>Prepared&nbsp; <b id="dateStamp"></b></span>
+      <span>Basis&nbsp; <b>Entitled vs. Deployed</b></span>
+      <span>All data stays in this browser tab</span>
+    </div>
+  </header>
+
+  <section class="summary" id="summary">
+    <div class="stat"><div class="num" id="statTotal">0</div><div class="lbl">License SKUs</div></div>
+    <div class="stat"><div class="num" id="statCompliant">0</div><div class="lbl">Compliant</div></div>
+    <div class="stat"><div class="num" id="statRisk">0</div><div class="lbl">At Risk (≥90% used)</div></div>
+    <div class="stat exposure" id="statExposureCard"><div class="num" id="statExposure">—</div><div class="lbl">Total True-up Cost</div></div>
+    <div class="verdict"><div class="stamp compliant" id="stamp"><span>No Data</span></div></div>
+  </section>
+
+  <div class="toolbar">
+    <div class="currency-toggle" id="currencyToggle">
+      <button data-cur="₹" class="active">₹ INR</button>
+      <button data-cur="$">$ USD</button>
+      <button data-cur="€">€ EUR</button>
+    </div>
+    <div class="actions">
+      <button class="btn" id="btnSample">Load Sample</button>
+      <button class="btn" id="btnReset">Reset</button>
+      <button class="btn" id="btnImport">Import CSV</button>
+      <input type="file" id="csvFile" accept=".csv">
+      <button class="btn" id="btnExportCsv">Export CSV</button>
+      <button class="btn" id="btnPrint">Print Report</button>
+      <button class="btn primary" id="btnAdd">+ Add License</button>
+    </div>
+  </div>
+
+  <div class="ledger">
+    <table>
+      <thead>
+        <tr>
+          <th>Publisher</th>
+          <th>Product</th>
+          <th>Metric</th>
+          <th class="num">Entitled</th>
+          <th class="num">Deployed</th>
+          <th class="num">Position</th>
+          <th class="num">Unit Cost</th>
+          <th class="num">True-up Cost</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="tbody">
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="3">Totals</td>
+          <td class="num" id="ftEntitled">0</td>
+          <td class="num" id="ftDeployed">0</td>
+          <td class="num" id="ftPosition">0</td>
+          <td class="num"></td>
+          <td class="num" id="ftExposure">—</td>
+          <td colspan="2"></td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <div class="legend">
+    <span><i class="c"></i> Compliant — deployed within entitlement</span>
+    <span><i class="r"></i> At risk — 90%+ of entitlement consumed</span>
+    <span><i class="s"></i> Shortfall — deployed exceeds entitlement</span>
+  </div>
+
+  <footer class="note">
+    <b>How this works:</b> Position = Entitled − Deployed. A negative position is a license shortfall and drives the True-up Cost figure (shortfall × unit cost) — the estimated cost to bring licensing current. Nothing here is uploaded anywhere; import, edit, and export all happen locally in your browser.
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  const tbody = document.getElementById('tbody');
+  let currency = '₹';
+  let rows = [];
+  let idSeq = 1;
+
+  const METRICS = ['Device','Named User','Concurrent User','Core','Server','Subscription'];
+
+  function newRow(data){
+    return Object.assign({
+      id: idSeq++,
+      publisher: '',
+      product: '',
+      metric: METRICS[0],
+      entitled: 0,
+      deployed: 0,
+      unitCost: 0
+    }, data || {});
+  }
+
+  function statusOf(row){
+    const pos = row.entitled - row.deployed;
+    if (pos < 0) return 'shortfall';
+    if (row.entitled > 0 && row.deployed / row.entitled >= 0.9) return 'risk';
+    return 'compliant';
+  }
+
+  function fmtMoney(n){
+    const rounded = Math.round(n);
+    return currency + rounded.toLocaleString('en-IN');
+  }
+
+  function render(){
+    tbody.innerHTML = '';
+    if (rows.length === 0){
+      tbody.innerHTML = '<tr class="empty-row"><td colspan="10">No license lines yet — add one, import a CSV, or load sample data to see how an ELP worksheet comes together.</td></tr>';
+    }
+
+    let totalEntitled = 0, totalDeployed = 0, totalPosition = 0, totalExposure = 0;
+    let cCompliant = 0, cRisk = 0, cShortfall = 0;
+
+    rows.forEach(row => {
+      const entitled = Number(row.entitled) || 0;
+      const deployed = Number(row.deployed) || 0;
+      const unitCost = Number(row.unitCost) || 0;
+      const pos = entitled - deployed;
+      const status = statusOf(row);
+      const exposure = status === 'shortfall' ? Math.abs(pos) * unitCost : 0;
+
+      totalEntitled += entitled;
+      totalDeployed += deployed;
+      totalPosition += pos;
+      totalExposure += exposure;
+      if (status === 'compliant') cCompliant++;
+      else if (status === 'risk') cRisk++;
+      else cShortfall++;
+
+      const tr = document.createElement('tr');
+      tr.dataset.id = row.id;
+      tr.innerHTML = `
+        <td><input data-field="publisher" value="${escapeAttr(row.publisher)}" placeholder="Publisher"></td>
+        <td><input data-field="product" value="${escapeAttr(row.product)}" placeholder="Product name"></td>
+        <td>
+          <select data-field="metric">
+            ${METRICS.map(m => `<option ${m===row.metric?'selected':''}>${m}</option>`).join('')}
+          </select>
+        </td>
+        <td class="num"><input class="numcell" data-field="entitled" type="number" min="0" value="${entitled}"></td>
+        <td class="num"><input class="numcell" data-field="deployed" type="number" min="0" value="${deployed}"></td>
+        <td class="calc pos ${pos < 0 ? 'pos-neg' : 'pos-pos'}">${pos > 0 ? '+' : ''}${pos}</td>
+        <td class="num"><input class="numcell" data-field="unitCost" type="number" min="0" value="${unitCost}"></td>
+        <td class="calc">${exposure > 0 ? fmtMoney(exposure) : '—'}</td>
+        <td><span class="badge ${status}">${status === 'compliant' ? 'Compliant' : status === 'risk' ? 'At risk' : 'Shortfall'}</span></td>
+        <td><button class="rowdel" title="Remove line" data-del="${row.id}">✕</button></td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    document.getElementById('ftEntitled').textContent = totalEntitled.toLocaleString('en-IN');
+    document.getElementById('ftDeployed').textContent = totalDeployed.toLocaleString('en-IN');
+    document.getElementById('ftPosition').textContent = (totalPosition > 0 ? '+' : '') + totalPosition.toLocaleString('en-IN');
+    document.getElementById('ftExposure').textContent = totalExposure > 0 ? fmtMoney(totalExposure) : '—';
+
+    document.getElementById('statTotal').textContent = rows.length;
+    document.getElementById('statCompliant').textContent = cCompliant;
+    document.getElementById('statRisk').textContent = cRisk;
+
+    const expCard = document.getElementById('statExposureCard');
+    const expNum = document.getElementById('statExposure');
+    if (totalExposure > 0){
+      expNum.textContent = fmtMoney(totalExposure);
+      expCard.classList.remove('zero');
+    } else {
+      expNum.textContent = rows.length ? fmtMoney(0) : '—';
+      expCard.classList.add('zero');
+    }
+
+    const stamp = document.getElementById('stamp');
+    stamp.className = 'stamp';
+    if (rows.length === 0){
+      stamp.classList.add('compliant');
+      stamp.innerHTML = '<span>No Data</span>';
+    } else if (cShortfall > 0){
+      stamp.classList.add('shortfall');
+      stamp.innerHTML = '<span>Review<br>Required</span>';
+    } else if (cRisk > 0){
+      stamp.classList.add('risk');
+      stamp.innerHTML = '<span>Monitor<br>Closely</span>';
+    } else {
+      stamp.classList.add('compliant');
+      stamp.innerHTML = '<span>Fully<br>Compliant</span>';
+    }
+  }
+
+  function escapeAttr(s){
+    return String(s == null ? '' : s).replace(/"/g,'&quot;');
+  }
+
+  tbody.addEventListener('input', e => {
+    const field = e.target.dataset.field;
+    if (!field) return;
+    const tr = e.target.closest('tr');
+    const id = Number(tr.dataset.id);
+    const row = rows.find(r => r.id === id);
+    if (!row) return;
+    if (['entitled','deployed','unitCost'].includes(field)){
+      row[field] = Number(e.target.value) || 0;
+    } else {
+      row[field] = e.target.value;
+    }
+    render();
+    // restore focus after re-render
+    const newTr = tbody.querySelector(`tr[data-id="${id}"]`);
+    if (newTr){
+      const input = newTr.querySelector(`[data-field="${field}"]`);
+      if (input){ input.focus(); const v = input.value; input.value=''; input.value=v; }
+    }
+  });
+
+  tbody.addEventListener('click', e => {
+    const delId = e.target.dataset.del;
+    if (delId){
+      rows = rows.filter(r => r.id !== Number(delId));
+      render();
+    }
+  });
+
+  document.getElementById('btnAdd').addEventListener('click', () => {
+    rows.push(newRow());
+    render();
+    const trs = tbody.querySelectorAll('tr');
+    const last = trs[trs.length - 1];
+    if (last) last.querySelector('input[data-field="publisher"]').focus();
+  });
+
+  document.getElementById('btnSample').addEventListener('click', () => {
+    rows = [
+      newRow({ publisher:'Microsoft', product:'Office 365 E3', metric:'Named User', entitled:250, deployed:238, unitCost:1900 }),
+      newRow({ publisher:'Adobe', product:'Creative Cloud', metric:'Named User', entitled:40, deployed:47, unitCost:4200 }),
+      newRow({ publisher:'Autodesk', product:'AutoCAD', metric:'Device', entitled:20, deployed:20, unitCost:15800 }),
+      newRow({ publisher:'Oracle', product:'Database Standard Edition', metric:'Core', entitled:16, deployed:22, unitCost:38000 }),
+      newRow({ publisher:'SAP', product:'ERP Named User', metric:'Named User', entitled:120, deployed:95, unitCost:9500 }),
+      newRow({ publisher:'Zoom', product:'Zoom Workplace Pro', metric:'Named User', entitled:100, deployed:88, unitCost:1400 }),
+    ];
+    render();
+  });
+
+  document.getElementById('btnPrint').addEventListener('click', () => window.print());
+
+  document.getElementById('btnReset').addEventListener('click', () => {
+    if (rows.length === 0) return;
+    rows = [];
+    render();
+  });
+
+  // Currency toggle
+  document.getElementById('currencyToggle').addEventListener('click', e => {
+    const btn = e.target.closest('button[data-cur]');
+    if (!btn) return;
+    currency = btn.dataset.cur;
+    document.querySelectorAll('#currencyToggle button').forEach(b => b.classList.toggle('active', b === btn));
+    render();
+  });
+
+  // CSV export
+  document.getElementById('btnExportCsv').addEventListener('click', () => {
+    const header = ['Publisher','Product','Metric','Entitled','Deployed','UnitCost','Position','Status','TrueUpCost'];
+    const lines = [header.join(',')];
+    rows.forEach(row => {
+      const entitled = Number(row.entitled) || 0;
+      const deployed = Number(row.deployed) || 0;
+      const unitCost = Number(row.unitCost) || 0;
+      const pos = entitled - deployed;
+      const status = statusOf(row);
+      const exposure = status === 'shortfall' ? Math.abs(pos) * unitCost : 0;
+      const cells = [row.publisher, row.product, row.metric, entitled, deployed, unitCost, pos, status, exposure]
+        .map(v => `"${String(v).replace(/"/g,'""')}"`);
+      lines.push(cells.join(','));
+    });
+    const blob = new Blob([lines.join('\n')], { type:'text/csv' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'effective-license-position.csv';
+    a.click();
+  });
+
+  // CSV import
+  document.getElementById('btnImport').addEventListener('click', () => document.getElementById('csvFile').click());
+  document.getElementById('csvFile').addEventListener('change', e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = evt => {
+      const text = evt.target.result;
+      const parsed = parseCsv(text);
+      if (!parsed.length) return;
+      const header = parsed[0].map(h => h.trim().toLowerCase());
+      const idx = {
+        publisher: header.indexOf('publisher'),
+        product: header.findIndex(h => h.includes('product')),
+        metric: header.indexOf('metric'),
+        entitled: header.findIndex(h => h.includes('entitl')),
+        deployed: header.findIndex(h => h.includes('deploy') || h.includes('install') || h.includes('usage')),
+        unitCost: header.findIndex(h => h.includes('cost') || h.includes('price'))
+      };
+      const imported = [];
+      for (let i = 1; i < parsed.length; i++){
+        const cols = parsed[i];
+        if (!cols || cols.every(c => c.trim() === '')) continue;
+        imported.push(newRow({
+          publisher: idx.publisher > -1 ? cols[idx.publisher] : '',
+          product: idx.product > -1 ? cols[idx.product] : (cols[0] || 'Untitled product'),
+          metric: idx.metric > -1 && METRICS.includes(cols[idx.metric]) ? cols[idx.metric] : METRICS[0],
+          entitled: idx.entitled > -1 ? Number(cols[idx.entitled]) || 0 : 0,
+          deployed: idx.deployed > -1 ? Number(cols[idx.deployed]) || 0 : 0,
+          unitCost: idx.unitCost > -1 ? Number(cols[idx.unitCost]) || 0 : 0
+        }));
+      }
+      rows = rows.concat(imported);
+      render();
+      e.target.value = '';
+    };
+    reader.readAsText(file);
+  });
+
+  function parseCsv(text){
+    // basic CSV parser handling quoted fields
+    const rows = [];
+    let row = [], field = '', inQuotes = false;
+    for (let i = 0; i < text.length; i++){
+      const c = text[i], next = text[i+1];
+      if (inQuotes){
+        if (c === '"' && next === '"'){ field += '"'; i++; }
+        else if (c === '"'){ inQuotes = false; }
+        else { field += c; }
+      } else {
+        if (c === '"'){ inQuotes = true; }
+        else if (c === ','){ row.push(field); field = ''; }
+        else if (c === '\n'){ row.push(field); rows.push(row); row = []; field = ''; }
+        else if (c === '\r'){ /* skip */ }
+        else { field += c; }
+      }
+    }
+    if (field.length || row.length){ row.push(field); rows.push(row); }
+    return rows.filter(r => r.length > 1 || (r[0] && r[0].trim() !== ''));
+  }
+
+  document.getElementById('dateStamp').textContent = new Date().toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' });
+
+  render();
+})();
+</script>
+</body>
+</html>
